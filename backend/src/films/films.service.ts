@@ -38,7 +38,7 @@ export class FilmsService {
     return {
       id: session.id,
       daytime: session.daytime,
-      hall: session.hall.toString(),
+      hall: session.hall,
       rows: session.rows,
       seats: session.seats,
       price: session.price,

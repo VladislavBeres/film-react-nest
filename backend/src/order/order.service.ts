@@ -1,30 +1,29 @@
 import {
-  Injectable,
   ConflictException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilmsRepository } from 'src/repository/films.repository';
 import { OrderRepository } from 'src/repository/order.repository';
 import {
   OrderItemDto,
   OrderResponseDto,
   OrderResponseItemDto,
 } from './dto/order.dto';
-import { Film, FilmDocument } from '../films/films.schema';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
-    @InjectModel(Film.name) private filmModel: Model<FilmDocument>,
+    private readonly filmsRepository: FilmsRepository,
   ) {}
 
   async createOrder(orderItems: OrderItemDto[]): Promise<OrderResponseDto> {
     const orders: OrderResponseItemDto[] = [];
 
     for (const item of orderItems) {
-      const film = await this.filmModel.findOne({ id: item.film }).exec();
+      // получаем фильм через FilmsRepository
+      const film = await this.filmsRepository.findById(item.film);
 
       if (!film) {
         throw new NotFoundException(`Фильм с ID ${item.film} не найден`);
@@ -38,6 +37,7 @@ export class OrderService {
         );
       }
 
+      // проверка корректности ряда и места
       if (
         item.row < 1 ||
         item.row > session.rows ||
@@ -51,10 +51,18 @@ export class OrderService {
 
       const seatKey = `${item.row}:${item.seat}`;
 
-      if (session.taken.includes(seatKey)) {
+      // атомарное бронирование
+      const updatedFilm = await this.filmsRepository.addTakenSeat(
+        item.film,
+        item.session,
+        seatKey,
+      );
+
+      if (!updatedFilm) {
         throw new ConflictException(`Место ${seatKey} уже занято`);
       }
 
+      // создаем заказ
       const order = await this.orderRepository.create({
         film: item.film,
         session: item.session,
@@ -63,9 +71,6 @@ export class OrderService {
         seat: item.seat,
         price: item.price,
       });
-
-      session.taken.push(seatKey);
-      await film.save();
 
       orders.push({
         ...item,

@@ -43,4 +43,23 @@ export class FilmsRepository {
       )
       .exec();
   }
+
+  // Новый метод: атомарная проверка + добавление места
+  async addTakenSeat(
+    filmId: string,
+    sessionId: string,
+    seatKey: string,
+  ): Promise<Film | null> {
+    return this.filmModel
+      .findOneAndUpdate(
+        {
+          id: filmId,
+          'schedule.id': sessionId,
+          'schedule.taken': { $ne: seatKey }, // место еще не занято
+        },
+        { $push: { 'schedule.$.taken': seatKey } },
+        { new: true },
+      )
+      .exec();
+  }
 }

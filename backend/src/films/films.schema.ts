@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema()
-export class Session {
+@Schema({ _id: false })
+export class ScheduleSchema {
   @Prop({ required: true })
   id: string;
 
@@ -10,7 +10,7 @@ export class Session {
   daytime: string;
 
   @Prop({ required: true })
-  hall: number;
+  hall: string;
 
   @Prop({ required: true })
   rows: number;
@@ -27,7 +27,7 @@ export class Session {
 
 @Schema()
 export class Film extends Document {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   id: string;
 
   @Prop({ required: true })
@@ -54,8 +54,8 @@ export class Film extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ type: [Session], required: true })
-  schedule: Session[];
+  @Prop({ type: [ScheduleSchema], required: true })
+  schedule: ScheduleSchema[];
 }
 
 export const FilmSchema = SchemaFactory.createForClass(Film);
