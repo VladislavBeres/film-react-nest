@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'node:path';
 
 import { configProvider } from './app.config.provider';
-import { FilmsModule } from './films/films.module';
-import { OrderModule } from './order/order.module';
+import { FilmsController } from './films/films.controller';
+import { FilmsService } from './films/films.service';
+import { OrderController } from './order/order.controller';
+import { OrderService } from './order/order.service';
+import { FilmsRepository } from './repository/films.repository';
+import { DatabaseModule } from './database/database-config.module';
 
 @Module({
   imports: [
@@ -14,21 +17,13 @@ import { OrderModule } from './order/order.module';
       isGlobal: true,
       cache: true,
     }),
-    MongooseModule.forRoot(
-      process.env.MONGODB_URI || 'mongodb://localhost:27017/afisha',
-    ),
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '..', 'public', 'content', 'afisha'),
       serveRoot: '/content/afisha',
-      serveStaticOptions: {
-        index: false,
-        fallthrough: true,
-      },
     }),
-    FilmsModule,
-    OrderModule,
+    DatabaseModule,
   ],
-  controllers: [],
-  providers: [configProvider],
+  controllers: [FilmsController, OrderController],
+  providers: [configProvider, FilmsService, OrderService, FilmsRepository],
 })
 export class AppModule {}
