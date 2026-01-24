@@ -9,7 +9,7 @@ import { Schedule } from 'src/entities/schedule.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+        type: configService.get('DATABASE_DRIVER'),
         url: configService.get<string>('DATABASE_URL'),
         entities: [Film, Schedule],
         synchronize: false,

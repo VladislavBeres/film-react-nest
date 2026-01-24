@@ -12,8 +12,8 @@ export class Film {
   @Column({ type: 'varchar' })
   director: string;
 
-  @Column({ type: 'text' })
-  tags: string;
+  @Column('simple-array')
+  tags: string[];
 
   @Column({ type: 'varchar' })
   title: string;
@@ -30,6 +30,10 @@ export class Film {
   @Column({ type: 'varchar' })
   cover: string;
 
-  @OneToMany(() => Schedule, (schedule) => schedule.film)
+  @OneToMany(() => Schedule, (schedule) => schedule.film, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   schedules: Schedule[];
 }

@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Film } from '../entities/film.entity';
@@ -34,7 +34,7 @@ export class FilmsRepository {
     });
     if (!schedule) return null;
 
-    schedule.taken = JSON.stringify(takenSeats);
+    schedule.taken = takenSeats;
     await this.scheduleRepository.save(schedule);
 
     return this.findById(filmId);
@@ -50,21 +50,15 @@ export class FilmsRepository {
     });
     if (!schedule) return null;
 
-    let takenArray: string[] = [];
-    if (schedule.taken && schedule.taken.trim() !== '') {
-      try {
-        takenArray = JSON.parse(schedule.taken);
-      } catch {
-        takenArray = schedule.taken.split(',').map((s) => s.trim());
-      }
+    if (!schedule.taken) {
+      schedule.taken = [];
     }
 
-    if (takenArray.includes(seatKey)) {
-      throw new ConflictException(`Место ${seatKey} уже занято`);
+    if (schedule.taken.includes(seatKey)) {
+      return null;
     }
 
-    takenArray.push(seatKey);
-    schedule.taken = JSON.stringify(takenArray);
+    schedule.taken.push(seatKey);
     await this.scheduleRepository.save(schedule);
 
     return this.findById(filmId);

@@ -21,12 +21,14 @@ export class OrderService {
 
     for (const item of orderItems) {
       const film = await this.filmsRepository.findById(item.film);
-      if (!film)
+      if (!film) {
         throw new NotFoundException(`Фильм с ID ${item.film} не найден`);
+      }
 
       const session = film.schedules.find((s) => s.id === item.session);
-      if (!session)
+      if (!session) {
         throw new NotFoundException(`Сеанс с ID ${item.session} не найден`);
+      }
 
       if (
         item.row < 1 ||
@@ -40,13 +42,16 @@ export class OrderService {
       }
 
       const seatKey = `${item.row}:${item.seat}`;
+
       const updatedFilm = await this.filmsRepository.addTakenSeat(
         item.film,
         item.session,
         seatKey,
       );
-      if (!updatedFilm)
+
+      if (!updatedFilm) {
         throw new ConflictException(`Место ${seatKey} уже занято`);
+      }
 
       orders.push({
         ...item,

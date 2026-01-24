@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS films (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     rating DOUBLE PRECISION NOT NULL,
     director VARCHAR NOT NULL,
-    tags TEXT,
+    tags TEXT[],
     title VARCHAR NOT NULL,
     about VARCHAR NOT NULL,
     description VARCHAR NOT NULL,

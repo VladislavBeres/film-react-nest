@@ -27,8 +27,8 @@ export class Schedule {
   @Column({ type: 'double precision' })
   price: number;
 
-  @Column({ type: 'text' })
-  taken: string;
+  @Column('text', { array: true, nullable: true })
+  taken: string[];
 
   @Column({ type: 'uuid', name: 'filmId' })
   filmId: string;
