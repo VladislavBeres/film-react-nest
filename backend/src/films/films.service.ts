@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import { FilmDto, SessionDto } from './dto/films.dto';
 import { FilmsRepository } from 'src/repository/films.repository';
 
@@ -14,10 +13,8 @@ export class FilmsService {
 
   async getFilmSchedule(id: string): Promise<SessionDto[]> {
     const film = await this.filmsRepository.findById(id);
-    if (!film) {
-      return [];
-    }
-    return film.schedule.map((session) => this.convertToSessionDto(session));
+    if (!film) return [];
+    return film.schedules.map((session) => this.convertToSessionDto(session));
   }
 
   private convertToFilmDto(film: any): FilmDto {

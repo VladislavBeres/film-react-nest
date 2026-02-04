@@ -1,0 +1,39 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Film } from './film.entity';
+
+@Entity('schedules')
+export class Schedule {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'varchar' })
+  daytime: string;
+
+  @Column({ type: 'integer' })
+  hall: number;
+
+  @Column({ type: 'integer' })
+  rows: number;
+
+  @Column({ type: 'integer' })
+  seats: number;
+
+  @Column({ type: 'double precision' })
+  price: number;
+
+  @Column('text', { array: true, nullable: true })
+  taken: string[];
+
+  @Column({ type: 'uuid', name: 'filmId' })
+  filmId: string;
+
+  @ManyToOne(() => Film, (film) => film.schedules)
+  @JoinColumn({ name: 'filmId' })
+  film: Film;
+}
