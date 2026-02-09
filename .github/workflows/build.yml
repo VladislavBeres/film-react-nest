@@ -30,14 +30,12 @@ jobs:
           context: ./backend
           push: true
           tags: ghcr.io/vladislavberes/film-react-nest-backend:latest
-
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
           tags: ghcr.io/vladislavberes/film-react-nest-frontend:latest
-
       - name: Build and push nginx image
         uses: docker/build-push-action@v5
         with:
