@@ -5,7 +5,7 @@ import { LoggerFactory } from './logger/logger.factory';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    bufferLogs: true, // Важно: буферизуем логи до подключения логгера
+    bufferLogs: true,
   });
   app.setGlobalPrefix('api/afisha');
   app.enableCors();

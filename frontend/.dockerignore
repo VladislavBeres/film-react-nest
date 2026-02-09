@@ -1,4 +1,19 @@
-node_modules
-.git
-dist
-*.log
+# Deps
+node_modules/
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# README и файлы лицензий
+README.md
+LICENSE
+
+# Dist
+dist/
+build/
+
+# IDE Files
+.idea/
+.vscode
+.DS_Store

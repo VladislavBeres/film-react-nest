@@ -85,12 +85,24 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - frontend_dist:/usr/share/nginx/html
       - ./backend/public/content:/usr/share/nginx/html/content
+      - ./certbot/www:/var/www/certbot:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
     depends_on:
       - backend
       - frontend
+    networks:
+      - film-network
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: film-certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot:rw
+      - ./certbot/conf:/etc/letsencrypt:rw
     networks:
       - film-network
 
