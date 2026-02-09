@@ -12,7 +12,7 @@ import { Schedule } from 'src/entities/schedule.entity';
         type: configService.get('DATABASE_DRIVER'),
         url: configService.get<string>('DATABASE_URL'),
         entities: [Film, Schedule],
-        synchronize: false,
+        synchronize: true,
         logging: false,
       }),
       inject: [ConfigService],
